@@ -4,7 +4,7 @@ import { calculateFees, calculateRewards } from "../../chain/referral-traversal"
 
 const router = Router();
 
-// POST /api/match/calculate — Vorschau berechnen ohne zu deployen
+// POST /api/match/calculate
 router.post("/calculate", async (req: Request, res: Response) => {
   try {
     const { talentId, annualSalary, scenario } = req.body;
@@ -14,17 +14,14 @@ router.post("/calculate", async (req: Request, res: Response) => {
       return;
     }
 
-    // User prüfen
     const talent = await prisma.user.findUnique({ where: { id: talentId } });
     if (!talent) {
       res.status(404).json({ error: "Talent nicht gefunden" });
       return;
     }
 
-    // Gebühren berechnen
     const fees = calculateFees(annualSalary, scenario);
 
-    // Mock Referral-Kette (3 Layer) — später durch echte Chain-Traversal ersetzen
     const mockChain = [
       { walletPkh: talent.walletPkh, inviterPkh: null, layer: 0 },
     ];
@@ -49,7 +46,7 @@ router.post("/calculate", async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/match/create — Match-Event erstellen
+// POST /api/match/create
 router.post("/create", async (req: Request, res: Response) => {
   try {
     const { talentId, annualSalary, scenario } = req.body;
@@ -79,7 +76,7 @@ router.post("/create", async (req: Request, res: Response) => {
     res.json({
       matchEvent,
       fees,
-      message: "Match-Event erstellt — bereit für Reward-Verteilung",
+      message: "Match-Event erstellt",
     });
   } catch (error) {
     console.error(error);
@@ -87,13 +84,31 @@ router.post("/create", async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/match/events — Alle Match-Events abrufen
-router.get("/events", async (_req: Request, res: Response) => {
+// GET /api/match/events
+router.get("/events", async (req: Request, res: Response) => {
   try {
+    const token = req.headers.authorization?.replace("Bearer ", "");
+    let userId: string | null = null;
+    let userRole: string = "USER";
+
+    if (token) {
+      try {
+        const jwt = await import("jsonwebtoken");
+        const decoded = jwt.default.verify(
+          token,
+          process.env.JWT_SECRET || "secret"
+        ) as { userId: string; role: string };
+        userId = decoded.userId;
+        userRole = decoded.role;
+      } catch {}
+    }
+
     const events = await prisma.matchEvent.findMany({
+      where: userRole === "ADMIN" ? {} : { talentId: userId || "" },
       include: { talent: { select: { email: true, walletAddress: true } } },
       orderBy: { createdAt: "desc" },
     });
+
     res.json(events);
   } catch (error) {
     res.status(500).json({ error: "Server Fehler" });

@@ -1,4 +1,5 @@
 import WalletConnect from "@/components/WalletConnect";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -12,10 +13,18 @@ export default function Home() {
         </p>
         <div className="bg-slate-800 rounded-xl p-6 mb-6">
           <p className="text-green-400 font-mono text-sm">
-            ✓ Netzwerk: Cardano Preprod Testnet
+            Netzwerk: Cardano Preprod Testnet
           </p>
         </div>
         <WalletConnect />
+        <div className="mt-6 flex gap-4 justify-center">
+          <Link href="/login" className="text-blue-400 hover:text-blue-300 text-sm">
+            Login / Registrieren
+          </Link>
+          <Link href="/dashboard" className="text-slate-400 hover:text-white text-sm">
+            Admin Dashboard
+          </Link>
+        </div>
       </div>
     </main>
   );
