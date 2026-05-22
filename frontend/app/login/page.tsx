@@ -2,29 +2,44 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import {
+  ArrowLeft,
+  Lock,
+  Mail,
+  ShieldCheck,
+  Sparkles,
+  UserRoundCheck,
+  Wallet,
+} from "lucide-react";
 
 export default function Login() {
   const router = useRouter();
+
   const [isRegister, setIsRegister] = useState(false);
   const [emailOrWallet, setEmailOrWallet] = useState("");
   const [password, setPassword] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
+
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function detectWallet() {
     try {
       const cardano = (window as any).cardano;
+
       if (!cardano?.eternl) {
         setError("Eternl Wallet nicht gefunden");
         return;
       }
+
       const walletApi = await cardano.eternl.enable();
       const addresses = await walletApi.getUsedAddresses();
       const address = addresses[0] || (await walletApi.getChangeAddress());
+
       setWalletAddress(address);
     } catch {
-      setError("Wallet-Verbindung fehlgeschlagen");
+      setError("Wallet Verbindung fehlgeschlagen");
     }
   }
 
@@ -35,21 +50,21 @@ export default function Login() {
     try {
       if (isRegister) {
         if (!walletAddress) {
-          setError("Bitte Wallet-Adresse eingeben oder Auto-detect nutzen");
+          setError("Bitte Wallet Adresse eingeben oder Auto Detect nutzen");
           setLoading(false);
           return;
         }
 
-        // PKH via Backend holen
         const pkhRes = await fetch("http://localhost:3001/api/admin/pkh", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ address: walletAddress }),
         });
+
         const pkhData = await pkhRes.json();
 
         if (!pkhRes.ok) {
-          setError("Ungültige Wallet-Adresse");
+          setError("Ungültige Wallet Adresse");
           setLoading(false);
           return;
         }
@@ -66,6 +81,7 @@ export default function Login() {
         });
 
         const data = await res.json();
+
         if (!res.ok) {
           setError(data.error || "Registrierung fehlgeschlagen");
           setLoading(false);
@@ -76,6 +92,7 @@ export default function Login() {
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("role", data.role);
         localStorage.setItem("email", data.email);
+
         router.push("/dashboard");
       } else {
         const isWalletAddress = emailOrWallet.startsWith("addr_");
@@ -92,6 +109,7 @@ export default function Login() {
         });
 
         const data = await res.json();
+
         if (!res.ok) {
           setError(data.error || "Login fehlgeschlagen");
           setLoading(false);
@@ -102,6 +120,7 @@ export default function Login() {
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("role", data.role);
         localStorage.setItem("email", data.email);
+
         router.push("/dashboard");
       }
     } catch (err) {
@@ -113,104 +132,206 @@ export default function Login() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-8 bg-slate-900">
-      <div className="w-full max-w-md">
-        <h1 className="text-4xl font-bold text-blue-400 text-center mb-2">
-          TalentChain
-        </h1>
-        <p className="text-slate-400 text-center mb-8">
-          Dezentrale Recruiting-Plattform
-        </p>
+    <main className="tc-login-page">
+      <div className="tc-login-bg" />
 
-        <div className="bg-slate-800 rounded-xl p-8">
-          <div className="flex mb-6">
+      <section className="tc-login-container">
+        <div className="tc-login-left">
+          <Link href="/" className="tc-login-brand">
+            <div className="tc-login-logo">
+              <Sparkles size={23} />
+            </div>
+
+            <div>
+              <p className="tc-login-brand-title">TalentChain</p>
+              <p className="tc-login-brand-subtitle">Web3 Referral Network</p>
+            </div>
+          </Link>
+
+          <div className="tc-login-kicker">
+            <ShieldCheck size={15} />
+            Sicherer Dashboard Zugang
+          </div>
+
+          <h1 className="tc-login-title">
+            Zugang zum <span>Referral Netzwerk.</span>
+          </h1>
+
+          <p className="tc-login-text">
+            Melde dich mit E Mail oder Wallet Adresse an und verwalte deine
+            TalentChain Aktivitäten, Match Events und Rewards.
+          </p>
+
+          <div className="tc-login-info-grid">
+            <div className="tc-login-info-card">
+              <div className="tc-login-info-icon cyan">
+                <Wallet size={21} />
+              </div>
+              <div>
+                <p className="tc-login-info-title">Cardano Wallet Ready</p>
+                <p className="tc-login-info-text">
+                  Registrierung mit Wallet Adresse und PKH Validierung für eine
+                  saubere Web3 Identität.
+                </p>
+              </div>
+            </div>
+
+            <div className="tc-login-info-card">
+              <div className="tc-login-info-icon violet">
+                <UserRoundCheck size={21} />
+              </div>
+              <div>
+                <p className="tc-login-info-title">Role Based Dashboard</p>
+                <p className="tc-login-info-text">
+                  Admins erhalten Zugriff auf User Verwaltung, Match Events,
+                  Rollen und Reward Prozesse.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="tc-login-card">
+          <div className="tc-login-card-header">
+            <div className="tc-login-card-logo">
+              <Sparkles size={27} />
+            </div>
+
+            <h2 className="tc-login-card-title">TalentChain</h2>
+
+            <p className="tc-login-card-subtitle">
+              {isRegister
+                ? "Erstelle deinen Web3 Account"
+                : "In dein Dashboard einloggen"}
+            </p>
+          </div>
+
+          <div className="tc-login-tabs">
             <button
-              onClick={() => setIsRegister(false)}
-              className={`flex-1 py-2 text-sm font-bold rounded-l-lg transition-colors ${
-                !isRegister ? "bg-blue-600 text-white" : "bg-slate-700 text-slate-400"
-              }`}
+              type="button"
+              onClick={() => {
+                setIsRegister(false);
+                setError(null);
+              }}
+              className={`tc-login-tab ${!isRegister ? "active" : ""}`}
             >
               Login
             </button>
+
             <button
-              onClick={() => setIsRegister(true)}
-              className={`flex-1 py-2 text-sm font-bold rounded-r-lg transition-colors ${
-                isRegister ? "bg-blue-600 text-white" : "bg-slate-700 text-slate-400"
-              }`}
+              type="button"
+              onClick={() => {
+                setIsRegister(true);
+                setError(null);
+              }}
+              className={`tc-login-tab ${isRegister ? "active" : ""}`}
             >
               Registrieren
             </button>
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <label className="text-slate-400 text-sm mb-1 block">
-                {isRegister ? "Email" : "Email oder Wallet-Adresse"}
-              </label>
-              <input
-                type="text"
-                value={emailOrWallet}
-                onChange={(e) => setEmailOrWallet(e.target.value)}
-                className="w-full bg-slate-700 text-white rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder={isRegister ? "email@beispiel.ch" : "email@beispiel.ch oder addr_test1..."}
-              />
+          <div className="tc-login-form">
+            <div className="tc-login-field">
+              <label>{isRegister ? "E Mail" : "E Mail oder Wallet Adresse"}</label>
+
+              <div className="tc-login-input-wrap">
+                <Mail className="tc-login-input-icon" size={18} />
+                <input
+                  type="text"
+                  value={emailOrWallet}
+                  onChange={(e) => setEmailOrWallet(e.target.value)}
+                  className="tc-login-input"
+                  placeholder={
+                    isRegister
+                      ? "email@beispiel.ch"
+                      : "email@beispiel.ch oder addr_test1..."
+                  }
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="text-slate-400 text-sm mb-1 block">Passwort</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-slate-700 text-white rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="••••••••"
-              />
+            <div className="tc-login-field">
+              <label>Passwort</label>
+
+              <div className="tc-login-input-wrap">
+                <Lock className="tc-login-input-icon" size={18} />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="tc-login-input"
+                  placeholder="••••••••"
+                />
+              </div>
             </div>
 
             {isRegister && (
-              <div>
-                <label className="text-slate-400 text-sm mb-1 block">
-                  Cardano Wallet-Adresse
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={walletAddress}
-                    onChange={(e) => setWalletAddress(e.target.value)}
-                    className="flex-1 bg-slate-700 text-white rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 text-xs"
-                    placeholder="addr_test1..."
-                  />
+              <div className="tc-login-field">
+                <label>Cardano Wallet Adresse</label>
+
+                <div className="tc-login-wallet-row">
+                  <div className="tc-login-input-wrap">
+                    <Wallet className="tc-login-input-icon" size={18} />
+                    <input
+                      type="text"
+                      value={walletAddress}
+                      onChange={(e) => setWalletAddress(e.target.value)}
+                      className="tc-login-input"
+                      placeholder="addr_test1..."
+                    />
+                  </div>
+
                   <button
+                    type="button"
                     onClick={detectWallet}
-                    className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-3 rounded-lg text-xs whitespace-nowrap"
+                    className="tc-login-detect-btn"
                   >
-                    Auto-detect
+                    Auto Detect
                   </button>
                 </div>
-                <p className="text-slate-500 text-xs mt-1">
-                  Manuell eingeben oder Eternl automatisch erkennen lassen
+
+                <p className="tc-login-help">
+                  Manuell eingeben oder Eternl automatisch erkennen lassen.
                 </p>
               </div>
             )}
 
-            {error && <p className="text-red-400 text-sm">{error}</p>}
+            {error && <p className="tc-login-error">{error}</p>}
 
             <button
+              type="button"
               onClick={handleSubmit}
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-600 text-white font-bold py-3 rounded-lg transition-colors"
+              className="tc-login-submit"
             >
-              {loading ? "..." : isRegister ? "Registrieren" : "Login"}
+              {loading
+                ? "Bitte warten..."
+                : isRegister
+                  ? "Account erstellen"
+                  : "Einloggen"}
             </button>
           </div>
-        </div>
 
-        <p className="text-center mt-4">
-          <a href="/" className="text-slate-400 hover:text-white text-sm">
-            Zurueck zur Startseite
-          </a>
-        </p>
-      </div>
+          <div className="tc-login-security">
+            <div className="tc-login-security-item">
+              <span className="tc-login-security-dot" />
+              Login Daten werden lokal als Token gespeichert.
+            </div>
+
+            <div className="tc-login-security-item">
+              <span className="tc-login-security-dot" />
+              Wallet Adressen bleiben sichtbar nachvollziehbar.
+            </div>
+          </div>
+
+          <div className="tc-login-back">
+            <Link href="/">
+              <ArrowLeft size={16} />
+              Zurück zur Startseite
+            </Link>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

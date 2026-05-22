@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "TalentChain",
-  description: "Dezentrale Recruiting-Plattform auf Cardano",
+  description: "Web3 Referral System auf Cardano",
 };
 
 export default function RootLayout({
