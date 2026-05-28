@@ -1,0 +1,76 @@
+generator client {
+  provider        = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Benutzer-Account (off-chain Identität)
+model User {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  passwordHash   String
+  walletAddress  String   @unique
+  walletPkh      String   @unique
+  role           Role     @default(USER)
+  isBlacklisted  Boolean  @default(false)
+
+  inviteCode     String?  @unique
+  usedInviteCode String?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  matchEventsAsTalent MatchEvent[]       @relation("TalentEvents")
+  referralsSent       ReferralRelation[] @relation("InviterRelations")
+  referralsReceived   ReferralRelation[] @relation("InviteeRelations")
+}
+
+enum Role {
+  ADMIN
+  L1_AMBASSADOR
+  USER
+}
+
+model MatchEvent {
+  id                String      @id @default(cuid())
+  talentId          String
+  talent            User        @relation("TalentEvents", fields: [talentId], references: [id])
+  annualSalary      Float
+  scenario          Scenario
+  totalFee          Float
+  referrerPool      Float
+  institutionAmount Float
+  talentAmount      Float
+  platformAmount    Float
+  txHash            String?
+  status            EventStatus @default(PENDING)
+  createdAt         DateTime    @default(now())
+}
+
+enum Scenario {
+  CH_LEHRE_WITH_TRAINING
+  CH_LEHRE_WITHOUT_TRAINING
+  USA_STUDY
+  CUSTOM
+}
+
+enum EventStatus {
+  PENDING
+  VERIFIED
+  DISTRIBUTED
+  FAILED
+  CANCELLED
+}
+
+model ReferralRelation {
+  id         String   @id @default(cuid())
+  inviterId  String?
+  inviteeId  String
+  invitee    User     @relation("InviteeRelations", fields: [inviteeId], references: [id])
+  inviter    User?    @relation("InviterRelations", fields: [inviterId], references: [id])
+  utxoTxHash String?
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
+}

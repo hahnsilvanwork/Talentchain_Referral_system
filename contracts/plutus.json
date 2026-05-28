@@ -1,0 +1,311 @@
+{
+  "preamble": {
+    "title": "talentchain/contracts",
+    "description": "Aiken contracts for project 'talentchain/contracts'",
+    "version": "0.0.0",
+    "plutusVersion": "v3",
+    "compiler": {
+      "name": "Aiken",
+      "version": "v1.1.22+39d6b04"
+    },
+    "license": "Apache-2.0"
+  },
+  "validators": [
+    {
+      "title": "identity_minting_policy.identity_minting_policy.mint",
+      "redeemer": {
+        "title": "redeemer",
+        "schema": {
+          "$ref": "#/definitions/identity_minting_policy~1MintAction"
+        }
+      },
+      "parameters": [
+        {
+          "title": "admin_pkh",
+          "schema": {
+            "$ref": "#/definitions/ByteArray"
+          }
+        }
+      ],
+      "compiledCode": "58fb010100229800aba2aba1aab9faab9eaab9dab9a9bae002488888896600264653001300800198041804800cdc3a400130080024888966002600460126ea800e33001375c601860146ea800e26644b30013004300b375400d1330013758600460186ea800c0262660026eb0c008c030dd5001804a0142300d300e300e300e300e300e300e300e300e0012232330010010032259800800c528456600266e3cdd71808000801c528c4cc008008c04400500c201e98049baa004488966002600a00315980098069baa00780145900e456600266e1d20020018acc004c034dd5003c00a2c80722c805900b22c8040601000260086ea802229344d9590021",
+      "hash": "9115946f8d1c07b6e5985682ac0e315b3e57a6118a30b8f7ace5dd34"
+    },
+    {
+      "title": "identity_minting_policy.identity_minting_policy.else",
+      "redeemer": {
+        "schema": {}
+      },
+      "parameters": [
+        {
+          "title": "admin_pkh",
+          "schema": {
+            "$ref": "#/definitions/ByteArray"
+          }
+        }
+      ],
+      "compiledCode": "58fb010100229800aba2aba1aab9faab9eaab9dab9a9bae002488888896600264653001300800198041804800cdc3a400130080024888966002600460126ea800e33001375c601860146ea800e26644b30013004300b375400d1330013758600460186ea800c0262660026eb0c008c030dd5001804a0142300d300e300e300e300e300e300e300e300e0012232330010010032259800800c528456600266e3cdd71808000801c528c4cc008008c04400500c201e98049baa004488966002600a00315980098069baa00780145900e456600266e1d20020018acc004c034dd5003c00a2c80722c805900b22c8040601000260086ea802229344d9590021",
+      "hash": "9115946f8d1c07b6e5985682ac0e315b3e57a6118a30b8f7ace5dd34"
+    },
+    {
+      "title": "referral_registry.referral_registry.spend",
+      "datum": {
+        "title": "datum",
+        "schema": {
+          "$ref": "#/definitions/referral_registry~1ReferralDatum"
+        }
+      },
+      "redeemer": {
+        "title": "redeemer",
+        "schema": {
+          "$ref": "#/definitions/referral_registry~1ReferralAction"
+        }
+      },
+      "parameters": [
+        {
+          "title": "admin_pkh",
+          "schema": {
+            "$ref": "#/definitions/ByteArray"
+          }
+        }
+      ],
+      "compiledCode": "590165010100229800aba2aba1aab9faab9eaab9dab9a9bae002488888896600264653001300800198041804800cdc3a400530080024888966002600460126ea800e26466453001159800980298061baa0028b466002601e601a6ea800a46020602260226022602260226022602260220032232330010010032259800800c528456600266e3cdd71809800801c528c4cc008008c05000500f20244889660026008601e6ea802a2b30013259800980298081baa0018998011bac3003301137540106eb8c04cc044dd5000c4cc008dd6180198089baa00800e403c602460206ea800e2660026eb0c008c040dd50039bae301230133010375400714a080722660026eb0c008c040dd5003806a01c201698061baa0079807801a444b300130040028acc004c040dd5005400e2c808a2b300130080028acc004c040dd5005400e2c808a2c807100e0c034c038004dc3a400060146ea800e2c8040601000260086ea802229344d95900201",
+      "hash": "d301efb3d4d33574acee2485181e805c95e8489cf95af9a0c9c5593b"
+    },
+    {
+      "title": "referral_registry.referral_registry.else",
+      "redeemer": {
+        "schema": {}
+      },
+      "parameters": [
+        {
+          "title": "admin_pkh",
+          "schema": {
+            "$ref": "#/definitions/ByteArray"
+          }
+        }
+      ],
+      "compiledCode": "590165010100229800aba2aba1aab9faab9eaab9dab9a9bae002488888896600264653001300800198041804800cdc3a400530080024888966002600460126ea800e26466453001159800980298061baa0028b466002601e601a6ea800a46020602260226022602260226022602260220032232330010010032259800800c528456600266e3cdd71809800801c528c4cc008008c05000500f20244889660026008601e6ea802a2b30013259800980298081baa0018998011bac3003301137540106eb8c04cc044dd5000c4cc008dd6180198089baa00800e403c602460206ea800e2660026eb0c008c040dd50039bae301230133010375400714a080722660026eb0c008c040dd5003806a01c201698061baa0079807801a444b300130040028acc004c040dd5005400e2c808a2b300130080028acc004c040dd5005400e2c808a2c807100e0c034c038004dc3a400060146ea800e2c8040601000260086ea802229344d95900201",
+      "hash": "d301efb3d4d33574acee2485181e805c95e8489cf95af9a0c9c5593b"
+    },
+    {
+      "title": "reward_distributor.reward_distributor.spend",
+      "datum": {
+        "title": "datum",
+        "schema": {
+          "$ref": "#/definitions/reward_distributor~1MatchDatum"
+        }
+      },
+      "redeemer": {
+        "title": "redeemer",
+        "schema": {
+          "$ref": "#/definitions/reward_distributor~1RewardRedeemer"
+        }
+      },
+      "parameters": [
+        {
+          "title": "admin_pkh",
+          "schema": {
+            "$ref": "#/definitions/ByteArray"
+          }
+        }
+      ],
+      "compiledCode": "59022d010100229800aba2aba1aab9faab9eaab9dab9a9bae002488888896600264653001300800198041804800cc0200092225980099b8748008c020dd500144ca60026018003300c300d001911919800800801911980180098010012444b30013370e900018061baa007899191919191919194c004dd7180b800cdd6180b803cdd6980b8034dd6980b802cdd6980b8024dd7180b801cdd7180b80124444444b3001301f0088998081bac301e00f225980080144cc048020896600200515980099b8748008c07cdd500ac5a264b3001323300100137586048604a604a604a604a604a604a604a604a60446ea8068896600200314a115980099b8f375c604a00204114a31330020023026001408481222b30013371090001bad30013021375403715980099b873370066e00cdc0194c0040066eb0c090c094c088dd500e520004004444b30010028800c66002007302700299b80375a604c00400280190251bad3001302137540366eb4c08cc090c090c090c084dd500d9bad30233024302430243024302137540366eb4c004c084dd5181198109baa016899b8848000c8cc004004dd6180118111baa01a2259800800c52000899b8048008cc008008c0980050244528203e8a50407d14a080f88c08cc090c09000501e44c8c008c09000cdd698110012042899180118110019bad3020002407d1640743017001301600130150013014001301300130120013011001300d375400f16402c3009375400516401c300800130043754011149a26cac8011",
+      "hash": "c5e17433f5b64390ff4f818194a61dd4064457da325b900208035d15"
+    },
+    {
+      "title": "reward_distributor.reward_distributor.else",
+      "redeemer": {
+        "schema": {}
+      },
+      "parameters": [
+        {
+          "title": "admin_pkh",
+          "schema": {
+            "$ref": "#/definitions/ByteArray"
+          }
+        }
+      ],
+      "compiledCode": "59022d010100229800aba2aba1aab9faab9eaab9dab9a9bae002488888896600264653001300800198041804800cc0200092225980099b8748008c020dd500144ca60026018003300c300d001911919800800801911980180098010012444b30013370e900018061baa007899191919191919194c004dd7180b800cdd6180b803cdd6980b8034dd6980b802cdd6980b8024dd7180b801cdd7180b80124444444b3001301f0088998081bac301e00f225980080144cc048020896600200515980099b8748008c07cdd500ac5a264b3001323300100137586048604a604a604a604a604a604a604a604a60446ea8068896600200314a115980099b8f375c604a00204114a31330020023026001408481222b30013371090001bad30013021375403715980099b873370066e00cdc0194c0040066eb0c090c094c088dd500e520004004444b30010028800c66002007302700299b80375a604c00400280190251bad3001302137540366eb4c08cc090c090c090c084dd500d9bad30233024302430243024302137540366eb4c004c084dd5181198109baa016899b8848000c8cc004004dd6180118111baa01a2259800800c52000899b8048008cc008008c0980050244528203e8a50407d14a080f88c08cc090c09000501e44c8c008c09000cdd698110012042899180118110019bad3020002407d1640743017001301600130150013014001301300130120013011001300d375400f16402c3009375400516401c300800130043754011149a26cac8011",
+      "hash": "c5e17433f5b64390ff4f818194a61dd4064457da325b900208035d15"
+    }
+  ],
+  "definitions": {
+    "ByteArray": {
+      "dataType": "bytes"
+    },
+    "Int": {
+      "dataType": "integer"
+    },
+    "List<Int>": {
+      "dataType": "list",
+      "items": {
+        "$ref": "#/definitions/Int"
+      }
+    },
+    "Option<ByteArray>": {
+      "title": "Option",
+      "anyOf": [
+        {
+          "title": "Some",
+          "description": "An optional value.",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "$ref": "#/definitions/ByteArray"
+            }
+          ]
+        },
+        {
+          "title": "None",
+          "description": "Nothing.",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": []
+        }
+      ]
+    },
+    "identity_minting_policy/MintAction": {
+      "title": "MintAction",
+      "anyOf": [
+        {
+          "title": "Mint",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": []
+        },
+        {
+          "title": "Burn",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": []
+        }
+      ]
+    },
+    "referral_registry/ReferralAction": {
+      "title": "ReferralAction",
+      "anyOf": [
+        {
+          "title": "Register",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": []
+        },
+        {
+          "title": "Renew",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": []
+        }
+      ]
+    },
+    "referral_registry/ReferralDatum": {
+      "title": "ReferralDatum",
+      "anyOf": [
+        {
+          "title": "ReferralDatum",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "inviter",
+              "$ref": "#/definitions/Option<ByteArray>"
+            },
+            {
+              "title": "invitee",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "identity_nft",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "registered_at",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "expires_at",
+              "$ref": "#/definitions/Int"
+            }
+          ]
+        }
+      ]
+    },
+    "reward_distributor/MatchDatum": {
+      "title": "MatchDatum",
+      "anyOf": [
+        {
+          "title": "MatchDatum",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "talent_pkh",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "annual_salary",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "total_fee",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "created_at",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "valid_until",
+              "$ref": "#/definitions/Int"
+            }
+          ]
+        }
+      ]
+    },
+    "reward_distributor/RewardRedeemer": {
+      "title": "RewardRedeemer",
+      "anyOf": [
+        {
+          "title": "RewardRedeemer",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "chain_indices",
+              "$ref": "#/definitions/List<Int>"
+            },
+            {
+              "title": "reward_amounts",
+              "$ref": "#/definitions/List<Int>"
+            },
+            {
+              "title": "institution_amount",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "talent_amount",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "platform_amount",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "institution_address",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "talent_address",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "platform_address",
+              "$ref": "#/definitions/ByteArray"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
