@@ -443,4 +443,20 @@ router.get("/sync", async (_req: Request, res: Response) => {
   }
 });
 
+// GET /api/referral/script-info
+router.get("/script-info", async (_req: Request, res: Response) => {
+  try {
+    const { getReferralScriptAddress } = await import("../../chain/referral-chain");
+    const address = await getReferralScriptAddress();
+    res.json({
+      scriptAddress: address,
+      policyId: "",
+      network: process.env.CARDANO_NETWORK || "preprod",
+      explorer: `https://preprod.cardanoscan.io/address/${address}`,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Script-Info nicht verfügbar" });
+  }
+});
+
 export default router;

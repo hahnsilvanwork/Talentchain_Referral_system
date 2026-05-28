@@ -1,5 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -8,20 +8,19 @@ datasource db {
 
 // Benutzer-Account (off-chain Identität)
 model User {
-  id             String   @id @default(cuid())
-  email          String   @unique
-  passwordHash   String
-  walletAddress  String   @unique
-  walletPkh      String   @unique
-  role           Role     @default(USER)
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  walletAddress String   @unique
+  walletPkh     String   @unique
+  role          Role     @default(USER)
   isBlacklisted  Boolean  @default(false)
-
   inviteCode     String?  @unique
   usedInviteCode String?
-
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  // Relations
   matchEventsAsTalent MatchEvent[]       @relation("TalentEvents")
   referralsSent       ReferralRelation[] @relation("InviterRelations")
   referralsReceived   ReferralRelation[] @relation("InviteeRelations")
@@ -33,6 +32,7 @@ enum Role {
   USER
 }
 
+// Match-Events (Stellenwechsel)
 model MatchEvent {
   id                String      @id @default(cuid())
   talentId          String
@@ -64,6 +64,7 @@ enum EventStatus {
   CANCELLED
 }
 
+// Referral-Beziehungen (off-chain Kopie der on-chain UTxOs)
 model ReferralRelation {
   id         String   @id @default(cuid())
   inviterId  String?

@@ -52,19 +52,43 @@ router.put("/user/:id", async (req: Request, res: Response) => {
 });
 
 // POST /api/admin/pkh
+// Unterstützt Base-, Enterprise- und Pointer-Adressen
+// (Eternl gibt bei neuen Wallets ohne TX-History Enterprise-Adressen zurück)
 router.post("/pkh", async (req: Request, res: Response) => {
   try {
     const { address } = req.body;
-    const addr = CSL.Address.from_bech32(address);
-    const baseAddr = CSL.BaseAddress.from_address(addr);
-    const pkh = baseAddr?.payment_cred().to_keyhash()?.to_hex();
-    if (!pkh) {
-      res.status(400).json({ error: "PKH nicht gefunden" });
+    if (!address) {
+      res.status(400).json({ error: "Adresse fehlt" });
       return;
     }
+
+    const addr = CSL.Address.from_bech32(address);
+    let pkh: string | undefined;
+
+    // 1. Base-Adresse (addr_test1q...) — häufigster Fall
+    const baseAddr = CSL.BaseAddress.from_address(addr);
+    if (baseAddr) pkh = baseAddr.payment_cred().to_keyhash()?.to_hex();
+
+    // 2. Enterprise-Adresse (addr_test1v...) — neue Wallets ohne Staking
+    if (!pkh) {
+      const entAddr = CSL.EnterpriseAddress.from_address(addr);
+      if (entAddr) pkh = entAddr.payment_cred().to_keyhash()?.to_hex();
+    }
+
+    // 3. Pointer-Adresse (selten)
+    if (!pkh) {
+      const ptrAddr = CSL.PointerAddress.from_address(addr);
+      if (ptrAddr) pkh = ptrAddr.payment_cred().to_keyhash()?.to_hex();
+    }
+
+    if (!pkh) {
+      res.status(400).json({ error: "PKH nicht ableitbar — bitte Base- oder Enterprise-Adresse verwenden" });
+      return;
+    }
+
     res.json({ pkh });
-  } catch {
-    res.status(400).json({ error: "Ungueltige Adresse" });
+  } catch (e: any) {
+    res.status(400).json({ error: "Ungültige Cardano-Adresse: " + (e.message || e) });
   }
 });
 

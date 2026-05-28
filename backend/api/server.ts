@@ -23,6 +23,27 @@ app.get("/health", (_req, res) => {
 // Public routes — kein Token nötig
 app.use("/api/auth", authRoutes);
 
+// PKH-Ableitung: public, wird beim Registrieren gebraucht (noch kein Token)
+app.post("/api/util/pkh", async (req: any, res: any) => {
+  try {
+    const { address } = req.body;
+    if (!address) { res.status(400).json({ error: "Adresse fehlt" }); return; }
+    const CSL = await import("@emurgo/cardano-serialization-lib-nodejs");
+    const addr = CSL.Address.from_bech32(address);
+    let pkh: string | undefined;
+    const base = CSL.BaseAddress.from_address(addr);
+    if (base) pkh = base.payment_cred().to_keyhash()?.to_hex();
+    if (!pkh) {
+      const ent = CSL.EnterpriseAddress.from_address(addr);
+      if (ent) pkh = ent.payment_cred().to_keyhash()?.to_hex();
+    }
+    if (!pkh) { res.status(400).json({ error: "PKH nicht ableitbar" }); return; }
+    res.json({ pkh });
+  } catch (e: any) {
+    res.status(400).json({ error: "Ungültige Adresse: " + e.message });
+  }
+});
+
 // User routes — Token nötig
 app.use("/api/match", authMiddleware, matchRoutes);
 app.use("/api/rewards", authMiddleware, rewardRoutes);

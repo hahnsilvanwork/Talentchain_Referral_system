@@ -4,6 +4,7 @@ import {
   fromText,
   MintingPolicy,
   Data,
+  Constr,
   mintingPolicyToId,
   applyParamsToScript,
 } from "@lucid-evolution/lucid";
@@ -16,14 +17,6 @@ import * as path from "path";
 import dotenv from "dotenv";
 
 dotenv.config();
-
-// FIX: ADMIN_ADDRESS kommt aus der .env, nicht hardcoded
-// Setzt voraus: ADMIN_ADDRESS=addr_test1... in .env
-function getAdminAddress(): string {
-  const addr = process.env.ADMIN_ADDRESS;
-  if (!addr) throw new Error("ADMIN_ADDRESS nicht in .env gesetzt");
-  return addr;
-}
 
 async function getLucid() {
   const lucid = await Lucid(
@@ -78,8 +71,8 @@ async function signAndSubmit(unsignedCbor: string): Promise<string> {
   const txHash = CSL.TransactionHash.from_bytes(
     blake.blake2b(txBody.to_bytes(), undefined, 32)
   );
-  const vkeyWitness = CSL.make_vkey_witness(txHash, paymentKey);
   const witnesses = CSL.Transaction.from_hex(unsignedCbor).witness_set();
+  const vkeyWitness = CSL.make_vkey_witness(txHash, paymentKey);
   const vkeys = CSL.Vkeywitnesses.new();
   vkeys.add(vkeyWitness);
   witnesses.set_vkeys(vkeys);
@@ -95,21 +88,28 @@ export async function mintIdentityNft(
   const lucid = await getLucid();
   const mintingPolicy = getMintingPolicy();
   const policyId = mintingPolicyToId(mintingPolicy);
-  const adminAddress = getAdminAddress();
 
   console.log("Policy ID:", policyId);
   console.log("Minting NFT fuer:", recipientAddress);
 
   const assetName = recipientPkh.slice(0, 32);
   const unit = policyId + fromText(assetName);
-  const redeemer = Data.void();
+
+  // FIX: Redeemer muss MintAction::Mint = Constr 0 [] sein
+  // Data.void() wäre zwar auch Constr 0 [], aber explizit ist sicherer
+  const redeemer = Data.to(new Constr(0, []));
+
+  // FIX: Admin-Adresse NICHT hardcoden — aus Wallet lesen
+  const adminAddress = await lucid.wallet().address();
+  const adminPkh = process.env.ADMIN_WALLET_PKH || "";
 
   const tx = await lucid
     .newTx()
     .mintAssets({ [unit]: 1n }, redeemer)
     .attach.MintingPolicy(mintingPolicy)
     .pay.ToAddress(recipientAddress, { [unit]: 1n })
-    .addSigner(adminAddress)
+    // FIX: addSigner bekommt die PKH (hex), nicht die Bech32-Adresse
+    .addSigner(adminPkh)
     .complete();
 
   const txHash = await signAndSubmit(tx.toCBOR());
